@@ -1,4 +1,4 @@
-﻿$(document).ready(function (){
+﻿s$(document).ready(function (){
 	// 对于没有jq的还要先注入jq
 	// 向页面注入JS
 	function injectCustomJs(jsPath) {
@@ -17,60 +17,60 @@
 
 
 	console.log('这是content script!');
-	$(document).on('click',function(e){
+	s$(document).on('click',function(e){
 		let dom = e.target;
 		if(dom.nodeName === 'HTML' || dom.nodeName === 'BODY') return;
 		let context = '';
-		let _class = $(dom).attr("class") ? $(dom).attr("class") : $(dom).parent().attr("class");
+		let _class = s$(dom).attr("class") ? s$(dom).attr("class") : s$(dom).parent().attr("class");
 		switch(dom.nodeName){
 			case 'INPUT':
 			case 'SELECT':
 			case 'CHECKBOX':
 			case 'RADIO':
-				context = $(dom).attr('name');
+				context = s$(dom).attr('name');
 				break;
 			default:
-				context = $.trim(dom.innerText);
+				context = s$.trim(dom.innerText);
 		}
 		if(!context || context.length > 20) context = '';
 		console.log(`事件类型:${e.type};事件对象标签名:${dom.nodeName};事件对象文字内容:${context};事件对象样式名:${_class};`);
 	})
 
-	$(document).on('change',function(e){
+	s$(document).on('change',function(e){
 		let dom = e.target;
-		let name = $(dom).attr('name');
-		console.log(`事件类型:${e.type};事件对象标签名:${dom.nodeName};事件对象name名:${name};输入内容:${$(dom).val()}`);
+		let name = s$(dom).attr('name');
+		console.log(`事件类型:${e.type};事件对象标签名:${dom.nodeName};事件对象name名:${name};输入内容:${s$(dom).val()}`);
 	});
 	console.log('注入代码')
-	// injectCustomJs('js/jquery-2.1.4.js');
+	injectCustomJs('js/jquery-2.1.4.js');
 	injectCustomJs()  //不可插入jq
 	setTimeout(() => {
 		console.log(8888888)
-		console.log($("iframe"))
-		if($("iframe")[0]){
-			$($("iframe")[0].contentDocument).on('click',function(e){
+		console.log(s$("iframe"))
+		if(s$("iframe")[0]){
+			s$(s$("iframe")[0].contentDocument).on('click',function(e){
 				let dom = e.target;
 				if(dom.nodeName === 'HTML' || dom.nodeName === 'BODY') return;
 				let context = '';
-				let _class = $(dom).attr("class") ? $(dom).attr("class") : $(dom).parent().attr("class");
+				let _class = s$(dom).attr("class") ? s$(dom).attr("class") : s$(dom).parent().attr("class");
 				switch(dom.nodeName){
 					case 'INPUT':
 					case 'SELECT':
 					case 'CHECKBOX':
 					case 'RADIO':
-						context = $(dom).attr('name');
+						context = s$(dom).attr('name');
 						break;
 					default:
-						context = $.trim(dom.innerText);
+						context = s$.trim(dom.innerText);
 				}
 				if(!context || context.length > 20) context = '';
 				console.log(`事件类型:${e.type};事件对象标签名:${dom.nodeName};事件对象文字内容:${context};事件对象样式名:${_class};`);
 			})
 
-			$($("iframe")[0].contentDocument).on('change',function(e){
+			s$(s$("iframe")[0].contentDocument).on('change',function(e){
 				let dom = e.target;
-				let name = $(dom).attr('name');
-				console.log(`事件类型:${e.type};事件对象标签名:${dom.nodeName};事件对象name名:${name};输入内容:${$(dom).val()}`);
+				let name = s$(dom).attr('name');
+				console.log(`事件类型:${e.type};事件对象标签名:${dom.nodeName};事件对象name名:${name};输入内容:${s$(dom).val()}`);
 			});
 		}
 	},2000)
@@ -124,7 +124,7 @@
 // 			let interval = 0;
 // 			function removeAdByJs()
 // 			{
-// 				$('[data-tuiguang]').parents('[data-click]').remove();
+// 				s$('[data-tuiguang]').parents('[data-click]').remove();
 // 			}
 // 			fuckBaiduAD();
 // 			initCustomPanel();
@@ -186,16 +186,16 @@
 // 		}
 // 	});
 //
-// 	window.addEventListener("message", function(e)
-// 	{
-// 		console.log('收到消息：', e.data);
-// 		if(e.data && e.data.cmd == 'invoke') {
-// 			eval('('+e.data.code+')');
-// 		}
-// 		else if(e.data && e.data.cmd == 'message') {
-// 			tip(e.data.data);
-// 		}
-// 	}, false);
+	window.addEventListener("message", function(e)
+	{
+		console.log('收到消息：', e.data);
+		if(e.data && e.data.cmd == 'invoke') {
+			console.log('('+e.data.code+')');
+		}
+		else if(e.data && e.data.cmd == 'message') {
+			console.log(e.data.data);
+		}
+	}, false);
 //
 //
 // 	function initCustomEventListen() {

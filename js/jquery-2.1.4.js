@@ -3108,7 +3108,7 @@
 				this,
 
 				// If this is a positional/relative selector, check membership in the returned set
-				// so $("p:first").is("p:last") won't return true for a doc with two "p".
+				// so s$("p:first").is("p:last") won't return true for a doc with two "p".
 				typeof selector === "string" && rneedsContext.test( selector ) ?
 					sQuery( selector ) :
 					selector || [],
@@ -3133,7 +3133,7 @@
 		init = sQuery.fn.init = function( selector, context, root ) {
 			var match, elem;
 
-			// HANDLE: $(""), $(null), $(undefined), $(false)
+			// HANDLE: s$(""), s$(null), s$(undefined), s$(false)
 			if ( !selector ) {
 				return this;
 			}
@@ -3158,7 +3158,7 @@
 				// Match html or make sure no context is specified for #id
 				if ( match && ( match[ 1 ] || !context ) ) {
 
-					// HANDLE: $(html) -> $(array)
+					// HANDLE: s$(html) -> s$(array)
 					if ( match[ 1 ] ) {
 						context = context instanceof sQuery ? context[ 0 ] : context;
 
@@ -3170,7 +3170,7 @@
 							true
 						) );
 
-						// HANDLE: $(html, props)
+						// HANDLE: s$(html, props)
 						if ( rsingleTag.test( match[ 1 ] ) && sQuery.isPlainObject( context ) ) {
 							for ( match in context ) {
 
@@ -3187,7 +3187,7 @@
 
 						return this;
 
-						// HANDLE: $(#id)
+						// HANDLE: s$(#id)
 					} else {
 						elem = document.getElementById( match[ 2 ] );
 
@@ -3200,23 +3200,23 @@
 						return this;
 					}
 
-					// HANDLE: $(expr, $(...))
+					// HANDLE: s$(expr, s$(...))
 				} else if ( !context || context.sQuery ) {
 					return ( context || root ).find( selector );
 
-					// HANDLE: $(expr, context)
-					// (which is just equivalent to: $(context).find(expr)
+					// HANDLE: s$(expr, context)
+					// (which is just equivalent to: s$(context).find(expr)
 				} else {
 					return this.constructor( context ).find( selector );
 				}
 
-				// HANDLE: $(DOMElement)
+				// HANDLE: s$(DOMElement)
 			} else if ( selector.nodeType ) {
 				this[ 0 ] = selector;
 				this.length = 1;
 				return this;
 
-				// HANDLE: $(function)
+				// HANDLE: s$(function)
 				// Shortcut for document ready
 			} else if ( isFunction( selector ) ) {
 				return root.ready !== undefined ?
@@ -4116,7 +4116,7 @@
 		sQuery.ready();
 	}
 
-// Catch cases where $(document).ready() is called
+// Catch cases where s$(document).ready() is called
 // after the browser event has already occurred.
 // Support: IE <=9 - 10 only
 // Older IE sometimes signals "interactive" too soon
@@ -7516,7 +7516,7 @@
 				value = hooks.expand( value );
 				delete props[ name ];
 
-				// Not quite $.extend, this won't overwrite existing keys.
+				// Not quite s$.extend, this won't overwrite existing keys.
 				// Reusing 'index' because we have the correct "name"
 				for ( index in value ) {
 					if ( !( index in props ) ) {
@@ -10653,7 +10653,7 @@
 
 						if ( isWindow( elem ) ) {
 
-							// $( window ).outerWidth/Height return w/h including scrollbars (gh-1729)
+							// s$( window ).outerWidth/Height return w/h including scrollbars (gh-1729)
 							return funcName.indexOf( "outer" ) === 0 ?
 								elem[ "inner" + name ] :
 								elem.document.documentElement[ "client" + name ];

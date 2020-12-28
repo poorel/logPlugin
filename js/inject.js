@@ -26,14 +26,106 @@ function sendMessageToContentScriptByPostMessage(data)
 // ajax 前提页面有引入jq 没有的话得换个写法  1 返回内容  2 请求详情
 function ajaxLister (script){
 	// 有jq可以直接使用
-	if ($) {
+	if (false) {
 		$(document).ajaxComplete(function (e) {
 			console.log('注入', arguments);
 			let {url,type,data } = arguments[2];  // 地址 请求类型 请求参数
 			let {responseText} = arguments[1]; //相应内容
 		});
 	}else {
-		// 没有jq 如何监听 请求的发送和接受
+		// 		内部没有jq  通知注入 其实注不注入也没用了
+
+		sendMessageToContentScriptByPostMessage()
+		// 修改xhr
+		class XMLHttp {
+			request = function (param) {};
+			response = function (param) {};
+		}
+		let http = new XMLHttp();
+
+		// 初始化 拦截XMLHttpRequest
+		function initXMLHttpRequest() {
+			let open = XMLHttpRequest.prototype.open;
+			XMLHttpRequest.prototype.open = function(...args){
+				let send = this.send;
+				let _this = this
+				let post_data = []
+				this.send = function (...data) {
+					post_data = data;
+					return send.apply(_this, data)
+				}
+				// 请求前拦截
+				http.request(args)
+
+				this.addEventListener('readystatechange', function () {
+					if (this.readyState === 4) {
+						let config = {
+							url: args[1],
+							status: this.status,
+							method: args[0],
+							data: post_data
+						}
+						// 请求后拦截
+						http.response({config, response: this.response})
+					}
+				}, false)
+				return open.apply(this, args);
+			}
+
+			setTimeout(() => {
+				let ifr = document.getElementsByTagName("iframe");
+				if(ifr && ifr[0]){
+					let ifrWin = document.getElementsByTagName("iframe")[0].contentWindow;
+					let open = ifrWin.XMLHttpRequest.prototype.open;
+					console.log('!!!!!6666')
+					ifrWin.XMLHttpRequest.prototype.open = function(...args){
+						let send = this.send;
+						let _this = this
+						let post_data = []
+						this.send = function (...data) {
+							post_data = data;
+							return send.apply(_this, data)
+						}
+						// 请求前拦截
+						console.log('!!!!!9898')
+						http.request(args)
+
+						this.addEventListener('readystatechange', function () {
+							if (this.readyState === 4) {
+								let config = {
+									url: args[1],
+									status: this.status,
+									method: args[0],
+									data: post_data
+								}
+								// 请求后拦截
+								http.response({config, response: this.response})
+							}
+						}, false)
+						return open.apply(this, args);
+					}
+				}
+			}, 3000)
+		}
+
+		// 初始化页面
+		(function () {
+			// XMLHttpRequest 拦截
+			http.request = function (param) {
+				console.log(param, "---request");
+			};
+			http.response = function (res) {
+				console.log(res, "---response");
+			}
+			// 初始化 XMLHttpRequest
+			initXMLHttpRequest();
+
+			// 模拟数据请求 （此处写自己要使用的请求）
+			// request();
+
+		})();
+
+
 
 	}
 

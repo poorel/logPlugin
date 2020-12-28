@@ -55,14 +55,14 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse)
 	sendResponse('我是后台，我已收到你的消息：' + JSON.stringify(request));
 });
 
-$('#test_cors').click((e) => {
-	$.get('https://www.baidu.com', function(html){
+s$('#test_cors').click((e) => {
+	s$.get('https://www.baidu.com', function(html){
 		console.log( html);
 		alert('跨域调用成功！');
 	});
 });
 
-$('#get_popup_title').click(e => {
+s$('#get_popup_title').click(e => {
 	var views = chrome.extension.getViews({type:'popup'});
 	if(views.length > 0) {
 		alert(views[0].document.title);
@@ -163,7 +163,7 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
 	{ urls: ["<all_urls>"]}
 );
 
-$(document).ajaxComplete(function (e) {
+s$(document).ajaxComplete(function (e) {
 	console.log(e);
 	console.log(arguments);
 	console.log(arguments[1]);
