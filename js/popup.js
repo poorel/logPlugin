@@ -164,6 +164,7 @@ function sendMessageToContentScript(message, callback)
 {
 	getCurrentTabId((tabId) =>
 	{
+		console.log(tabId)
 		chrome.tabs.sendMessage(tabId, message, function(response)
 		{
 			if(callback) callback(response);
@@ -219,4 +220,44 @@ s$('#show_notification').click(e => {
 s$('#check_media').click(e => {
 	alert('即将打开一个有视频的网站，届时将自动检测是否存在视频！');
 	chrome.tabs.create({url: 'http://www.w3school.com.cn/tiy/t.asp?f=html5_video'});
+});
+
+
+chrome.storage.sync.get('_form', (res) => {
+	console.log(res._form)
+	if(!res._form){
+		return ;
+	}
+	let {level, domain2, domain, url} = res._form;
+	console.log(url)
+	s$("[name='level']").val(level);
+	s$("[name='url']").val(url);
+	s$("[name='domain']").val(domain);
+	s$("[name='domain2']").val(domain2);
+});
+
+layui.use('form', function(){
+	var form = layui.form;
+
+	//监听提交
+	form.on('submit(formDemo)', function(data){
+		console.log(data);
+		// layer.msg(JSON.stringify(data.field));
+		sendMessageToContentScript('reload');
+		chrome.storage.sync.set({_form: data.field}, () => {
+			chrome.notifications.create(null, {
+				type: 'image',
+				iconUrl: 'img/1.png',
+				title: '提示',
+				message: '配置成功',
+				imageUrl: 'img/sds.png'
+			}, () => {
+				// setTimeout(() => {
+				// 	window.close()
+				// }, 1000)
+			});
+		});
+
+		return false;
+	});
 });

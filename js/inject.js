@@ -24,7 +24,8 @@ function sendMessageToContentScriptByPostMessage(data)
 })();
 
 // ajax 前提页面有引入jq 没有的话得换个写法  1 返回内容  2 请求详情
-function ajaxLister (script){
+function ajaxLister (){
+	// let _ws = new WebSocket('172.16.1.208:8889');
 	// 有jq可以直接使用
 	if (false) {
 		$(document).ajaxComplete(function (e) {
