@@ -121,9 +121,6 @@ function ajaxLister (){
 			// 初始化 XMLHttpRequest
 			initXMLHttpRequest();
 
-			// 模拟数据请求 （此处写自己要使用的请求）
-			// request();
-
 		})();
 
 

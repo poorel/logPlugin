@@ -236,6 +236,10 @@ chrome.storage.sync.get('_form', (res) => {
 	s$("[name='domain2']").val(domain2);
 });
 
+s$('#saveLog').on('click', function(){
+	sendMessageToContentScript('saveLog');
+});
+
 layui.use('form', function(){
 	var form = layui.form;
 
@@ -244,6 +248,7 @@ layui.use('form', function(){
 		console.log(data);
 		// layer.msg(JSON.stringify(data.field));
 		sendMessageToContentScript('reload');
+
 		chrome.storage.sync.set({_form: data.field}, () => {
 			chrome.notifications.create(null, {
 				type: 'image',

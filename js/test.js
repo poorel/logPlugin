@@ -1,4 +1,22 @@
 ﻿s$(document).ready(function (){
+	//下载文件
+	const content = [];
+	function getTimeStr (){
+		return new Date().toLocaleString().replace(/:\d{1,2}$/,' ');
+	}
+	function createJson (){
+		const jsr = JSON.stringify(content);
+		const blob = new Blob([jsr], {type : 'text/plain;charset=utf-8'});
+		const url = URL.createObjectURL(blob);
+
+		const a = document.createElement('a');
+		a.href = url;
+
+		a.download =  getTimeStr() + '.txt';
+		document.documentElement.appendChild(a)
+		a.click()
+		document.documentElement.removeChild(a)
+	}
 
 	chrome.storage.sync.get('_form', (res) => {
 		if(!res._form){
@@ -19,8 +37,19 @@
 		}
 
 		// 判断是否是ip地址 决定发送websocket还是ajax 目前直接websocket
-		let ws = new WebSocket(url);
+		let ws = false
+		if(url != '999' && url){
+			ws = new WebSocket(url);
+		}
 
+		// ws.onclose = function (res) {
+		// 	console.log(res);
+		// 	ws = new WebSocket(url);
+		// };
+		// ws.onerror = function () {
+		// 	console.log(res);
+		// 	ws = new WebSocket(url);
+		// };
 		function sendLog(message) {
 			const stationId = window.location.href; // 完整的url
 			const userName = JSON.parse(localStorage.getItem('stationData')).userName;// 用户名
@@ -32,7 +61,7 @@
 				msgType: 'com.geekplus.beetle.station.message.SendLogMsg',
 				_token: localStorage.getItem('GeekPlusLocalSessionID'),
 			};
-			ws.send(JSON.stringify(data));
+			ws && ws.send(JSON.stringify(data));
 		}
 
 		// 向页面注入JS
@@ -49,8 +78,26 @@
 			};
 			document.body.appendChild(temp);
 		}
+		// xpath
+		function getXPath( element )
+		{
+			var val=element.value;
+			console.log("val="+val);
+			var xpath = '';
+			for ( ; element && element.nodeType == 1; element = element.parentNode )
+			{
+				console.log(element);
+				var id = s$(element.parentNode).children(element.tagName).index(element) + 1;
+				id > 1 ? (id = '[' + id + ']') : (id = '');
+				xpath = '/' + element.tagName.toLowerCase() + id + xpath;
+			}
+			return xpath;
+		}
 		s$(document).on('click',function(e){
+			console.log('点击')
 			let dom = e.target;
+
+			console.log(getXPath(dom));
 			if(dom.nodeName === 'HTML' || dom.nodeName === 'BODY') return;
 			let context = '';
 			let _class = s$(dom).attr("class") ? s$(dom).attr("class") : s$(dom).parent().attr("class");
@@ -65,7 +112,7 @@
 					context = s$.trim(dom.innerText);
 			}
 			if(!context || context.length > 20) context = '';
-			sendLog(`事件类型:${e.type};事件对象标签名:${dom.nodeName};事件对象文字内容:${context};事件对象样式名:${_class};`)
+			console.log(`事件类型:${e.type};事件对象标签名:${dom.nodeName};事件对象文字内容:${context};事件对象样式名:${_class};`)
 		})
 
 		s$(document).on('change',function(e){
@@ -81,10 +128,88 @@
 		}
 
 		setTimeout(() => {
-			console.log(8888888)
-			console.log(s$("iframe"))
+
 			if(s$("iframe")[0]){
-				s$(s$("iframe")[0].contentDocument).on('click',function(e){
+				createJson ()
+				console.log('999', s$(s$("iframe")[0].contentDocument).find(".el-select-dropdown__list"));
+				console.log(document.getElementsByTagName('iframe')[0].contentWindow);
+				// s$(s$("iframe")[0].contentDocument).find(".el-select-dropdown__list").on('click',function(e){
+				// 	console.log(e);
+				// });
+				// 选择需要观察变动的节点
+				let bt = debounce(bindClick);
+				const targetNode = s$(s$("iframe")[0].contentDocument).find(".el-popper");
+				// console.log(s$(s$("iframe")[0].contentDocument),s$("iframe").contents());
+				//console.log(targetNode);
+				s$("iframe").contents().find("body")[0].addEventListener("DOMSubtreeModified", function(obj){
+					// obj
+					// console.log('列表中子元素被修改',obj);
+					let target = obj.target;
+					if(target && s$(target).hasClass('el-popper')){
+						bt(target);
+					}
+
+				}, false);
+// 观察器的配置（需要观察什么变动）
+				const config = {
+					attributes: true,
+					characterData: false,
+					childList: false,
+					subtree: false,
+					attributeOldValue: false,
+					characterDataOldValue: false
+				};
+
+// 当观察到变动时执行的回调函数
+				// 防抖 限流
+				function debounce(callback,delay=500){
+					var t = null
+					return function(dom){
+						clearTimeout(t)
+						t = setTimeout(callback.bind(this,dom),delay)
+					}
+				}
+				function throttle(callback,duration=500){
+					var lastTime = new Date().getTime()
+					return function(){
+						var now = new Date().getTime()
+						if(now - lastTime > duration) {
+							callback();
+							lastTime = now;
+						}
+					}
+				}
+
+				let signInput = null;
+
+				const callback = function(mutationsList, observer) {
+					// Use traditional 'for loops' for IE 11
+					// console.log(mutationsList, observer);
+
+					// mutationsList.forEach(function(mutation) {
+					// 	if(s$(mutation.target).css("display") === "none"){
+					// 		debounce(() => {
+					// 				if(signInput){
+					// 					console.log(signInput.val())
+					// 					signInput = null
+					// 				}
+					// 		})
+					// 	}
+					// });
+					bt();
+				};
+
+// 创建一个观察器实例并传入回调函数
+				// const observer = new MutationObserver(debounce(callback,100));
+
+// 以上述配置开始观察目标节点
+// 				Array.from(targetNode).forEach(item => {
+// 					observer.observe(item, config);
+// 				})
+
+				function clickEvent(e){
+					console.log('click');
+					e.preventDefault()
 					let dom = e.target;
 					if(dom.nodeName === 'HTML' || dom.nodeName === 'BODY') return;
 					let context = '';
@@ -100,21 +225,40 @@
 							context = s$.trim(dom.innerText);
 					}
 					if(!context || context.length > 20) context = '';
+					content.push(getTimeStr() + `事件类型:${e.type};事件对象标签名:${dom.nodeName};事件对象文字内容:${context};事件对象样式名:${_class};`)
 					console.log(`事件类型:${e.type};事件对象标签名:${dom.nodeName};事件对象文字内容:${context};事件对象样式名:${_class};`);
-				})
+				}
+				function bindClick(dom){
+					console.log('更新绑定',dom);
+					let li = s$(s$("iframe")[0].contentDocument).find('.el-popper').find(".el-select-dropdown__item")
+					s$(dom).unbind("click").on('click',clickEvent)
+					// li动态生成时
+					li.unbind("click").on('click',clickEvent)
+				}
+				s$(s$("iframe")[0].contentDocument).unbind("click").on('click',clickEvent)
+				bindClick();
 
 				s$(s$("iframe")[0].contentDocument).on('change',function(e){
 					let dom = e.target;
 					let name = s$(dom).attr('name');
+
+					content.push(getTimeStr() + `事件类型:${e.type};事件对象标签名:${dom.nodeName};事件对象name名:${name};输入内容:${s$(dom).val()}`)
 					console.log(`事件类型:${e.type};事件对象标签名:${dom.nodeName};事件对象name名:${name};输入内容:${s$(dom).val()}`);
 				});
 			}
-		},2000)
+
+			// 检测下载
+			let interval = setInterval(function(){
+				console.log(`被使用的js堆栈内存:${performance.memory.usedJSHeapSize},js堆栈内存总大小:${performance.memory.totalJSHeapSize},js堆栈内存限制:${performance.memory.jsHeapSizeLimit}`)
+			},60000);
+
+		},5000)
 
 	});
+
+
 // 注意，必须设置了run_at=document_start 此段代码才会生效
-	document.addEventListener('DOMContentLoaded', function()
-	{
+	document.addEventListener('DOMContentLoaded', function() {
 		// 注入自定义JS
 		console.log('注入代码')
 		injectCustomJs();
@@ -169,8 +313,7 @@
 		}
 	});
 
-	function initCustomPanel()
-	{
+	function initCustomPanel() {
 		var panel = document.createElement('div');
 		panel.className = 'chrome-plugin-demo-panel';
 		panel.innerHTML = `
@@ -193,8 +336,13 @@
 	{
 		//console.log('收到来自 ' + (sender.tab ? "content-script(" + sender.tab.url + ")" : "popup或者background") + ' 的消息：', request);
 		console.log(request);
-		if(request == 'reload'){
+		if(request === 'reload'){
 			window.location.reload();
+			return
+		}
+
+		if(request === 'saveLog'){
+			createJson();
 			return
 		}
 
