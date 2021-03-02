@@ -110,13 +110,38 @@ function ajaxLister (){
 		}
 
 		// 初始化页面
+		let keyXHR = ['queryOutOrderMsgToPrint','queryBoxNoteToPrint','getOutOrderMsgToUnbox'];
 		(function () {
+			function getTimeStr (){
+				return new Date().toLocaleString().replace(/:\d{1,2}$/,' ');
+			}
 			// XMLHttpRequest 拦截
 			http.request = function (param) {
 				console.log(param, "---request");
+				param.push(getTimeStr())
+				window.postMessage(param, '*');
 			};
 			http.response = function (res) {
 				console.log(res, "---response");
+				let url = res.config.url;
+				let time = getTimeStr();
+				let param = {}
+				let IsCollectAllData = keyXHR.some(function (item){
+					return url.indexOf(item) > -1
+				})
+				if(IsCollectAllData){
+					param = {
+						...res,
+						time
+					}
+				}else {
+					param = {
+						url,
+						time
+					}
+				}
+
+				window.postMessage(param, '*');
 			}
 			// 初始化 XMLHttpRequest
 			initXMLHttpRequest();

@@ -47,17 +47,17 @@
 
 	//保存到本地数据
 	function saveLocalData (data){
+		console.log('保存到本地')
 		let length = data.length;
 		chrome.storage.local.get(['localData'], function(result) {
-			console.log('Value currently is ' + result.localData);
+			//console.log('Value currently is ' + result.localData);
 			let value = result.localData ? result.localData.concat(data) : data;
 			chrome.storage.local.set({localData: value}, function() {
-				console.log('Value is set to ' + value);
-				console.log(length)
+				//console.log('Value is set to ' + value);
+				//console.log(length)
 				content.splice(0, length);
 			});
 		});
-		console.log('一步？')
 	}
 	let saveData = debounce(saveLocalData)
 
@@ -136,42 +136,56 @@
 			}
 			return xpath;
 		}
-		s$(document).on('click',function(e){
-			console.log('点击')
-			let dom = e.target;
+		if(level === '2' || level === '3'){
+			s$(document).on('click',function(e){
+				console.log('点击')
+				let dom = e.target;
 
-			console.log(getXPath(dom));
-			if(dom.nodeName === 'HTML' || dom.nodeName === 'BODY') return;
-			let context = '';
-			let _class = s$(dom).attr("class") ? s$(dom).attr("class") : s$(dom).parent().attr("class");
-			switch(dom.nodeName){
-				case 'INPUT':
-				case 'SELECT':
-				case 'CHECKBOX':
-				case 'RADIO':
-					context = s$(dom).attr('name');
-					break;
-				default:
-					context = s$.trim(dom.innerText);
-			}
-			if(!context || context.length > 20) context = '';
-			console.log(`事件类型:${e.type};事件对象标签名:${dom.nodeName};事件对象文字内容:${context};事件对象样式名:${_class};`)
-		})
+				console.log(getXPath(dom));
+				if(dom.nodeName === 'HTML' || dom.nodeName === 'BODY') return;
+				let context = '';
+				let _class = s$(dom).attr("class") ? s$(dom).attr("class") : s$(dom).parent().attr("class");
+				switch(dom.nodeName){
+					case 'INPUT':
+					case 'SELECT':
+					case 'CHECKBOX':
+					case 'RADIO':
+						context = s$(dom).attr('name');
+						break;
+					default:
+						context = s$.trim(dom.innerText);
+				}
+				if(!context || context.length > 20) context = '';
+				console.log(`事件类型:${e.type};事件对象标签名:${dom.nodeName};事件对象文字内容:${context};事件对象样式名:${_class};`)
+			})
 
-		s$(document).on('change',function(e){
-			let dom = e.target;
-			let name = s$(dom).attr('name');
-			console.log(`事件类型:${e.type};事件对象标签名:${dom.nodeName};事件对象name名:${name};输入内容:${s$(dom).val()}`);
-		});
-
-		if(level === '2'){
-			console.log('注入代码')
-			// injectCustomJs('js/jquery-2.1.4.js');
-			injectCustomJs()  //不可插入jq
+			s$(document).on('change',function(e){
+				let dom = e.target;
+				let name = s$(dom).attr('name');
+				console.log(`事件类型:${e.type};事件对象标签名:${dom.nodeName};事件对象name名:${name};输入内容:${s$(dom).val()}`);
+			});
 		}
 
-		setTimeout(() => {
+		if(level === '2' || level === '4'){
+			console.log('注入代码')
+			// injectCustomJs('js/jquery-2.1.4.js');
+			injectCustomJs()  //不可插入jq会扰乱原有环境
+		}
+		// 检测下载
+		let Max = 3145728;  // 最大3mb
+		let interval = setInterval(function(){
+			chrome.storage.local.getBytesInUse('localData', function(res) {
+				// Notify that we saved.
+				if( res > Max ){
+					createJson();
+				}
+				console.log(res)
+			});
 
+		},10000);
+		// vue部分
+		return;
+		setTimeout(() => {
 			if(s$("iframe")[0]){
 				createJson ()
 				console.log('999', s$(s$("iframe")[0].contentDocument).find(".el-select-dropdown__list"));
@@ -273,72 +287,66 @@
 					console.log(`事件类型:${e.type};事件对象标签名:${dom.nodeName};事件对象name名:${name};输入内容:${s$(dom).val()}`);
 				});
 			}
-
-			// 检测下载
-			let interval = setInterval(function(){
-				console.log(`被使用的js堆栈内存:${performance.memory.usedJSHeapSize},js堆栈内存总大小:${performance.memory.totalJSHeapSize},js堆栈内存限制:${performance.memory.jsHeapSizeLimit}`)
-			},60000);
-
 		},5000)
 
 	});
 
 
 // 注意，必须设置了run_at=document_start 此段代码才会生效
-	document.addEventListener('DOMContentLoaded', function() {
-		// 注入自定义JS
-		console.log('注入代码')
-		injectCustomJs();
-		// 给谷歌搜索结果的超链接增加 _target="blank"
-		if(location.host == 'www.google.com.tw')
-		{
-			var objs = document.querySelectorAll('h3.r a');
-			for(var i=0; i<objs.length; i++)
-			{
-				objs[i].setAttribute('_target', 'blank');
-			}
-			console.log('已处理谷歌超链接！');
-		}
-		else if(location.host == 'www.baidu.com')
-		{
-			function fuckBaiduAD()
-			{
-				if(document.getElementById('my_custom_css')) return;
-				var temp = document.createElement('style');
-				temp.id = 'my_custom_css';
-				(document.head || document.body).appendChild(temp);
-				var css = `
-			/* 移除百度右侧广告 */
-			#content_right{display:none;}
-			/* 覆盖整个屏幕的相关推荐 */
-			.rrecom-btn-parent{display:none;}'
-			/* 难看的按钮 */
-			.result-op.xpath-log{display:none !important;}`;
-				temp.innerHTML = css;
-				console.log('已注入自定义CSS！');
-				// 屏蔽百度推广信息
-				removeAdByJs();
-				// 这种必须用JS移除的广告一般会有延迟，干脆每隔一段时间清楚一次
-				interval = setInterval(removeAdByJs, 2000);
-
-				// 重新搜索时页面不会刷新，但是被注入的style会被移除，所以需要重新执行
-				temp.addEventListener('DOMNodeRemoved', function(e)
-				{
-					console.log('自定义CSS被移除，重新注入！');
-					if(interval) clearInterval(interval);
-					fuckBaiduAD();
-				});
-			}
-			let interval = 0;
-			function removeAdByJs()
-			{
-				s$('[data-tuiguang]').parents('[data-click]').remove();
-			}
-			fuckBaiduAD();
-			initCustomPanel();
-			initCustomEventListen();
-		}
-	});
+// 	document.addEventListener('DOMContentLoaded', function() {
+// 		// 注入自定义JS
+// 		console.log('注入代码')
+// 		injectCustomJs();
+// 		// 给谷歌搜索结果的超链接增加 _target="blank"
+// 		if(location.host == 'www.google.com.tw')
+// 		{
+// 			var objs = document.querySelectorAll('h3.r a');
+// 			for(var i=0; i<objs.length; i++)
+// 			{
+// 				objs[i].setAttribute('_target', 'blank');
+// 			}
+// 			console.log('已处理谷歌超链接！');
+// 		}
+// 		else if(location.host == 'www.baidu.com')
+// 		{
+// 			function fuckBaiduAD()
+// 			{
+// 				if(document.getElementById('my_custom_css')) return;
+// 				var temp = document.createElement('style');
+// 				temp.id = 'my_custom_css';
+// 				(document.head || document.body).appendChild(temp);
+// 				var css = `
+// 			/* 移除百度右侧广告 */
+// 			#content_right{display:none;}
+// 			/* 覆盖整个屏幕的相关推荐 */
+// 			.rrecom-btn-parent{display:none;}'
+// 			/* 难看的按钮 */
+// 			.result-op.xpath-log{display:none !important;}`;
+// 				temp.innerHTML = css;
+// 				console.log('已注入自定义CSS！');
+// 				// 屏蔽百度推广信息
+// 				removeAdByJs();
+// 				// 这种必须用JS移除的广告一般会有延迟，干脆每隔一段时间清楚一次
+// 				interval = setInterval(removeAdByJs, 2000);
+//
+// 				// 重新搜索时页面不会刷新，但是被注入的style会被移除，所以需要重新执行
+// 				temp.addEventListener('DOMNodeRemoved', function(e)
+// 				{
+// 					console.log('自定义CSS被移除，重新注入！');
+// 					if(interval) clearInterval(interval);
+// 					fuckBaiduAD();
+// 				});
+// 			}
+// 			let interval = 0;
+// 			function removeAdByJs()
+// 			{
+// 				s$('[data-tuiguang]').parents('[data-click]').remove();
+// 			}
+// 			fuckBaiduAD();
+// 			// initCustomPanel();
+// 			// initCustomEventListen();
+// 		}
+// 	});
 
 	function initCustomPanel() {
 		var panel = document.createElement('div');
@@ -407,12 +415,8 @@
 	window.addEventListener("message", function(e)
 	{
 		console.log('收到消息：', e.data);
-		if(e.data && e.data.cmd == 'invoke') {
-			console.log('('+e.data.code+')');
-		}
-		else if(e.data && e.data.cmd == 'message') {
-			console.log(e.data.data);
-		}
+		content.push(e.data);
+		saveData(content);
 	}, false);
 
 
