@@ -1,22 +1,65 @@
 ﻿s$(document).ready(function (){
+	// 防抖 限流
+	function debounce(callback,delay=500){
+		var t = null
+		return function(dom){
+			clearTimeout(t)
+			t = setTimeout(callback.bind(this,dom),delay)
+		}
+	}
+	function throttle(callback,duration=500){
+		var lastTime = new Date().getTime()
+		return function(){
+			var now = new Date().getTime()
+			if(now - lastTime > duration) {
+				callback();
+				lastTime = now;
+			}
+		}
+	}
+
 	//下载文件
 	const content = [];
 	function getTimeStr (){
 		return new Date().toLocaleString().replace(/:\d{1,2}$/,' ');
 	}
 	function createJson (){
-		const jsr = JSON.stringify(content);
-		const blob = new Blob([jsr], {type : 'text/plain;charset=utf-8'});
-		const url = URL.createObjectURL(blob);
+		chrome.storage.local.get(['localData'], function(result) {
+			console.log('Value currently is ' + result.localData);
+			if(result.localData){
+				chrome.storage.local.remove(['localData'], function (){
+					console.log('同时删除本地数据')
+				})
+				const jsr = JSON.stringify(result.localData);
+				const blob = new Blob([jsr], {type : 'text/plain;charset=utf-8'});
+				const url = URL.createObjectURL(blob);
 
-		const a = document.createElement('a');
-		a.href = url;
+				const a = document.createElement('a');
+				a.href = url;
 
-		a.download =  getTimeStr() + '.txt';
-		document.documentElement.appendChild(a)
-		a.click()
-		document.documentElement.removeChild(a)
+				a.download =  getTimeStr() + '.txt';
+				document.documentElement.appendChild(a)
+				a.click()
+				document.documentElement.removeChild(a)
+			}
+		});
 	}
+
+	//保存到本地数据
+	function saveLocalData (data){
+		let length = data.length;
+		chrome.storage.local.get(['localData'], function(result) {
+			console.log('Value currently is ' + result.localData);
+			let value = result.localData ? result.localData.concat(data) : data;
+			chrome.storage.local.set({localData: value}, function() {
+				console.log('Value is set to ' + value);
+				console.log(length)
+				content.splice(0, length);
+			});
+		});
+		console.log('一步？')
+	}
+	let saveData = debounce(saveLocalData)
 
 	chrome.storage.sync.get('_form', (res) => {
 		if(!res._form){
@@ -161,24 +204,6 @@
 				};
 
 // 当观察到变动时执行的回调函数
-				// 防抖 限流
-				function debounce(callback,delay=500){
-					var t = null
-					return function(dom){
-						clearTimeout(t)
-						t = setTimeout(callback.bind(this,dom),delay)
-					}
-				}
-				function throttle(callback,duration=500){
-					var lastTime = new Date().getTime()
-					return function(){
-						var now = new Date().getTime()
-						if(now - lastTime > duration) {
-							callback();
-							lastTime = now;
-						}
-					}
-				}
 
 				let signInput = null;
 
@@ -226,6 +251,7 @@
 					}
 					if(!context || context.length > 20) context = '';
 					content.push(getTimeStr() + `事件类型:${e.type};事件对象标签名:${dom.nodeName};事件对象文字内容:${context};事件对象样式名:${_class};`)
+					saveData(content);
 					console.log(`事件类型:${e.type};事件对象标签名:${dom.nodeName};事件对象文字内容:${context};事件对象样式名:${_class};`);
 				}
 				function bindClick(dom){
@@ -243,6 +269,7 @@
 					let name = s$(dom).attr('name');
 
 					content.push(getTimeStr() + `事件类型:${e.type};事件对象标签名:${dom.nodeName};事件对象name名:${name};输入内容:${s$(dom).val()}`)
+					saveData(content);
 					console.log(`事件类型:${e.type};事件对象标签名:${dom.nodeName};事件对象name名:${name};输入内容:${s$(dom).val()}`);
 				});
 			}
