@@ -10,9 +10,9 @@
 	// 图标，一般偷懒全部用一个尺寸的也没问题
 	"icons":
 	{
-		"16": "img/icon.png",
-		"48": "img/icon.png",
-		"128": "img/icon.png"
+		"16": "img/1.png",
+		"48": "img/1.png",
+		"128": "img/1.png"
 	},
 	// 会一直常驻的后台JS或后台页面
 	"background":
@@ -32,7 +32,7 @@
 	// 当某些特定页面打开才显示的图标
 	/*"page_action":
 	{
-		"default_icon": "img/icon.png",
+		"default_icon": "img/1.png",
 		"default_title": "我是pageAction",
 		"default_popup": "popup.html"
 	},*/

@@ -210,7 +210,7 @@ s$('#hide_badge').click(() => {
 s$('#show_notification').click(e => {
 	chrome.notifications.create(null, {
 		type: 'image',
-		iconUrl: 'img/icon.png',
+		iconUrl: 'img/1.png',
 		title: '祝福',
 		message: '骚年，祝你圣诞快乐！Merry christmas!',
 		imageUrl: 'img/sds.png'

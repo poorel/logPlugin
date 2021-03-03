@@ -21,11 +21,11 @@
 	//下载文件
 	const content = [];
 	function getTimeStr (){
-		return new Date().toLocaleString().replace(/:\d{1,2}$/,' ');
+		return new Date().toLocaleString();
 	}
 	function createJson (){
 		chrome.storage.local.get(['localData'], function(result) {
-			console.log('Value currently is ' + result.localData);
+			// console.log('Value currently is ' + result.localData);
 			if(result.localData){
 				chrome.storage.local.remove(['localData'], function (){
 					console.log('同时删除本地数据')
@@ -414,7 +414,7 @@
 
 	window.addEventListener("message", function(e)
 	{
-		console.log('收到消息：', e.data);
+		// console.log('收到消息：', e.data);
 		content.push(e.data);
 		saveData(content);
 	}, false);

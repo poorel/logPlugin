@@ -113,16 +113,16 @@ function ajaxLister (){
 		let keyXHR = ['queryOutOrderMsgToPrint','queryBoxNoteToPrint','getOutOrderMsgToUnbox'];
 		(function () {
 			function getTimeStr (){
-				return new Date().toLocaleString().replace(/:\d{1,2}$/,' ');
+				return new Date().toLocaleString();
 			}
 			// XMLHttpRequest 拦截
 			http.request = function (param) {
-				console.log(param, "---request");
-				param.push(getTimeStr())
+				// console.log(param, "---request");
+				param.push(getTimeStr(), window.location.href)
 				window.postMessage(param, '*');
 			};
 			http.response = function (res) {
-				console.log(res, "---response");
+				// console.log(res, "---response");
 				let url = res.config.url;
 				let time = getTimeStr();
 				let param = {}
@@ -132,12 +132,14 @@ function ajaxLister (){
 				if(IsCollectAllData){
 					param = {
 						...res,
-						time
+						time,
+						href: window.location.href
 					}
 				}else {
 					param = {
 						url,
-						time
+						time,
+						href: window.location.href
 					}
 				}
 

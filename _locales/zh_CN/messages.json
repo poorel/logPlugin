@@ -1,4 +1,4 @@
 {
-	"pluginDesc": {"message": "一个简单的Chrome插件demo"},
+	"pluginDesc": {"message": "日志插件"},
 	"helloWorld": {"message": "你好啊，世界！"}
 }
