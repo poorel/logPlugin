@@ -116,9 +116,10 @@ function ajaxLister (){
 			}
 			// XMLHttpRequest 拦截
 			http.request = function (param) {
+				let data = JSON.parse(JSON.stringify(param))
 				// console.log(param, "---request");
-				param.push(getTimeStr(), window.location.href)
-				window.postMessage(param, '*');
+				data.push(getTimeStr(), window.location.href)
+				window.postMessage(data, '*');
 			};
 			http.response = function (res) {
 				// console.log(res, "---response");
