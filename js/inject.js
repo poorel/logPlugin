@@ -39,8 +39,8 @@ function ajaxLister (){
 		sendMessageToContentScriptByPostMessage()
 		// 修改xhr
 		class XMLHttp {
-			request = function (param) {};
-			response = function (param) {};
+			request (param) {};
+			response (param) {};
 		}
 		let http = new XMLHttp();
 
@@ -78,7 +78,6 @@ function ajaxLister (){
 				if(ifr && ifr[0]){
 					let ifrWin = document.getElementsByTagName("iframe")[0].contentWindow;
 					let open = ifrWin.XMLHttpRequest.prototype.open;
-					console.log('!!!!!6666')
 					ifrWin.XMLHttpRequest.prototype.open = function(...args){
 						let send = this.send;
 						let _this = this

@@ -65,7 +65,7 @@
 		if(!res._form){
 			return ;
 		}
-		let {level, domain2, domain, url} = res._form;
+		let {level, ajaxUrl, domain, url} = res._form;  //监听等级 接口监听地址  域名监听地址  日志记录地址
 		let allDomain = domain.split(/\n/g);
 		let ymyz = false;
 		let href = window.location.href;

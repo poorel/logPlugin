@@ -228,12 +228,12 @@ chrome.storage.sync.get('_form', (res) => {
 	if(!res._form){
 		return ;
 	}
-	let {level, domain2, domain, url} = res._form;
+	let {level, ajaxUrl, domain, url} = res._form;
 	console.log(url)
 	s$("[name='level']").val(level);
 	s$("[name='url']").val(url);
 	s$("[name='domain']").val(domain);
-	s$("[name='domain2']").val(domain2);
+	s$("[name='ajaxUrl']").val(ajaxUrl);
 });
 
 s$('#saveLog').on('click', function(){
