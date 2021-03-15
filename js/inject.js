@@ -109,7 +109,16 @@ function ajaxLister (){
 		}
 
 		// 初始化页面
-		let keyXHR = ['queryOutOrderMsgToPrint','queryBoxNoteToPrint','getOutOrderMsgToUnbox'];
+		let keyXHR = [];
+		let ajaxUrlSwitch = ''; // 待定
+		window.addEventListener("message", function(e)
+		{
+			let {ajaxUrl,ajaxUrlSwitch} = e.data
+			if(ajaxUrl){
+				keyXHR = ajaxUrl.split(',')
+				ajaxUrlSwitch = ajaxUrlSwitch;
+			}
+		}, false);
 		(function () {
 			function getTimeStr (){
 				return new Date().toLocaleString();
@@ -119,7 +128,7 @@ function ajaxLister (){
 				let data = JSON.parse(JSON.stringify(param))
 				// console.log(param, "---request");
 				data.push(getTimeStr(), window.location.href)
-				window.postMessage(data, '*');
+					window.postMessage(data, '*');
 			};
 			http.response = function (res) {
 				// console.log(res, "---response");
@@ -129,7 +138,7 @@ function ajaxLister (){
 				let IsCollectAllData = keyXHR.some(function (item){
 					return url.indexOf(item) > -1
 				})
-				if(IsCollectAllData){
+				if(IsCollectAllData && keyXHR.length){
 					param = {
 						...res,
 						time,
@@ -142,8 +151,8 @@ function ajaxLister (){
 						href: window.location.href
 					}
 				}
-
 				window.postMessage(param, '*');
+
 			}
 			// 初始化 XMLHttpRequest
 			initXMLHttpRequest();

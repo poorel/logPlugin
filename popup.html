@@ -35,12 +35,12 @@
 			</select>
 		</div>
 	</div>
-	<div class="layui-form-item">
-		<label class="layui-form-label">日志记录地址</label>
-		<div class="layui-input-block">
-			<input type="text" name="url" required  lay-verify="required" placeholder="如：172.16.1.11" autocomplete="off" class="layui-input">
-		</div>
-	</div>
+<!--	<div class="layui-form-item">-->
+<!--		<label class="layui-form-label">日志记录地址</label>-->
+<!--		<div class="layui-input-block">-->
+<!--			<input type="text" name="url" required  lay-verify="required" placeholder="如：172.16.1.11" autocomplete="off" class="layui-input">-->
+<!--		</div>-->
+<!--	</div>-->
 
 <!--	<div class="layui-form-item">-->
 <!--		<label class="layui-form-label">复选框</label>-->
@@ -53,15 +53,17 @@
 	<div class="layui-form-item layui-form-text">
 		<label class="layui-form-label">域名地址</label>
 		<div class="layui-input-block">
-			<textarea name="domain" placeholder="多个地址换行分割，不填则监听全部" class="layui-textarea"></textarea>
+			<textarea name="domain" placeholder="多个地址英文逗号分割，不填则监听全部" class="layui-textarea"></textarea>
 		</div>
 	</div>
-	<div style="visibility: hidden;height: 20px;" class="layui-form-item layui-form-text">
+	<div class="layui-form-item layui-form-text">
 		<label class="layui-form-label">接口地址</label>
 		<div class="layui-input-block">
-			<textarea name="ajaxUrl" placeholder="多个地址换行分割，不填则监听全部" class="layui-textarea"></textarea>
+			<textarea name="ajaxUrl" placeholder="多个地址英文逗号分割，不填则不监听任何接口详细内容" class="layui-textarea"></textarea>
+<!--	，开启下方开关则只监听填入接口		<input type="checkbox" name="ajaxUrlSwitch" lay-skin="switch">-->
 		</div>
 	</div>
+
 	<div class="layui-form-item">
 		<div class="layui-input-block">
 			<button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>

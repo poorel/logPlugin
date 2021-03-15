@@ -65,7 +65,7 @@
 		if(!res._form){
 			return ;
 		}
-		let {level, ajaxUrl, domain, url} = res._form;  //监听等级 接口监听地址  域名监听地址  日志记录地址
+		let {level, ajaxUrl, domain, url, ajaxUrlSwitch} = res._form;  //监听等级 接口监听地址  域名监听地址  日志记录地址
 		let allDomain = domain.split(/\n/g);
 		let ymyz = false;
 		let href = window.location.href;
@@ -81,7 +81,7 @@
 
 		// 判断是否是ip地址 决定发送websocket还是ajax 目前直接websocket
 		let ws = false
-		if(url != '999' && url){
+		if(false){ // url != '999' && url
 			ws = new WebSocket(url);
 		}
 
@@ -118,6 +118,8 @@
 			{
 				// 放在页面不好看，执行完后移除掉
 				this.parentNode.removeChild(this);
+				//发送content-script消息
+				window.postMessage({ajaxUrl, ajaxUrlSwitch}, '*');
 			};
 			document.body.appendChild(temp);
 		}
@@ -184,20 +186,15 @@
 
 		},10000);
 		// vue部分
-		return;
 		setTimeout(() => {
 			if(s$("iframe")[0]){
 				createJson ()
-				console.log('999', s$(s$("iframe")[0].contentDocument).find(".el-select-dropdown__list"));
-				console.log(document.getElementsByTagName('iframe')[0].contentWindow);
-				// s$(s$("iframe")[0].contentDocument).find(".el-select-dropdown__list").on('click',function(e){
-				// 	console.log(e);
-				// });
+				// console.log('999', s$(s$("iframe")[0].contentDocument).find(".el-select-dropdown__list"));
+				// console.log(document.getElementsByTagName('iframe')[0].contentWindow);
 				// 选择需要观察变动的节点
 				let bt = debounce(bindClick);
-				const targetNode = s$(s$("iframe")[0].contentDocument).find(".el-popper");
-				// console.log(s$(s$("iframe")[0].contentDocument),s$("iframe").contents());
-				//console.log(targetNode);
+				// const targetNode = s$(s$("iframe")[0].contentDocument).find(".el-popper");
+				// 更优解
 				s$("iframe").contents().find("body")[0].addEventListener("DOMSubtreeModified", function(obj){
 					// obj
 					// console.log('列表中子元素被修改',obj);
@@ -207,44 +204,45 @@
 					}
 
 				}, false);
-// 观察器的配置（需要观察什么变动）
-				const config = {
-					attributes: true,
-					characterData: false,
-					childList: false,
-					subtree: false,
-					attributeOldValue: false,
-					characterDataOldValue: false
-				};
-
-// 当观察到变动时执行的回调函数
-
-				let signInput = null;
-
-				const callback = function(mutationsList, observer) {
-					// Use traditional 'for loops' for IE 11
-					// console.log(mutationsList, observer);
-
-					// mutationsList.forEach(function(mutation) {
-					// 	if(s$(mutation.target).css("display") === "none"){
-					// 		debounce(() => {
-					// 				if(signInput){
-					// 					console.log(signInput.val())
-					// 					signInput = null
-					// 				}
-					// 		})
-					// 	}
-					// });
-					bt();
-				};
-
-// 创建一个观察器实例并传入回调函数
-				// const observer = new MutationObserver(debounce(callback,100));
-
-// 以上述配置开始观察目标节点
-// 				Array.from(targetNode).forEach(item => {
-// 					observer.observe(item, config);
-// 				})
+				// 不在使用此方法
+// // 观察器的配置（需要观察什么变动）
+// 				const config = {
+// 					attributes: true,
+// 					characterData: false,
+// 					childList: false,
+// 					subtree: false,
+// 					attributeOldValue: false,
+// 					characterDataOldValue: false
+// 				};
+//
+// // 当观察到变动时执行的回调函数
+//
+// 				let signInput = null;
+//
+// 				const callback = function(mutationsList, observer) {
+// 					// Use traditional 'for loops' for IE 11
+// 					// console.log(mutationsList, observer);
+//
+// 					// mutationsList.forEach(function(mutation) {
+// 					// 	if(s$(mutation.target).css("display") === "none"){
+// 					// 		debounce(() => {
+// 					// 				if(signInput){
+// 					// 					console.log(signInput.val())
+// 					// 					signInput = null
+// 					// 				}
+// 					// 		})
+// 					// 	}
+// 					// });
+// 					bt();
+// 				};
+//
+// // 创建一个观察器实例并传入回调函数
+// 				// const observer = new MutationObserver(debounce(callback,100));
+//
+// // 以上述配置开始观察目标节点
+// // 				Array.from(targetNode).forEach(item => {
+// // 					observer.observe(item, config);
+// // 				})
 
 				function clickEvent(e){
 					console.log('click');
@@ -347,23 +345,6 @@
 // 			// initCustomEventListen();
 // 		}
 // 	});
-
-	function initCustomPanel() {
-		var panel = document.createElement('div');
-		panel.className = 'chrome-plugin-demo-panel';
-		panel.innerHTML = `
-		<h2>injected-script操作content-script演示区：</h2>
-		<div class="btn-area">
-			<a href="javascript:sendMessageToContentScriptByPostMessage('你好，我是普通页面！')">通过postMessage发送消息给content-script</a><br>
-			<a href="javascript:sendMessageToContentScriptByEvent('你好啊！我是通过DOM事件发送的消息！')">通过DOM事件发送消息给content-script</a><br>
-			<a href="javascript:invokeContentScript('sendMessageToBackground()')">发送消息到后台或者popup</a><br>
-		</div>
-		<div id="my_custom_log">
-		</div>
-	`;
-		document.body.appendChild(panel);
-	}
-
 
 
 // 接收来自后台的消息
