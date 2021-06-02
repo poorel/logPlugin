@@ -43,6 +43,11 @@ function ajaxLister (){
 			response (param) {};
 		}
 		let http = new XMLHttp();
+		let http2 = false;
+		if(window.frames[0]){
+			http2 = new window.frames[0].XMLHttpRequest();
+		}
+
 
 		// 初始化 拦截XMLHttpRequest
 		function initXMLHttpRequest() {
@@ -123,7 +128,38 @@ function ajaxLister (){
 			function getTimeStr (){
 				return new Date().toLocaleString();
 			}
+			console.log('执行接口监听～～～～～',window.frames[0])
 			// XMLHttpRequest 拦截
+			// http2 && http2.request = function (param) {
+			// 	let data = JSON.parse(JSON.stringify(param))
+			// 	// console.log(param, "---request");
+			// 	data.push(getTimeStr(), window.location.href)
+			// 	window.postMessage(data, '*');
+			// };
+			// http2 && http2.response = function (res) {
+			// 	console.log(res, "---response");
+			// 	let url = res.config.url;
+			// 	let time = getTimeStr();
+			// 	let param = {}
+			// 	let IsCollectAllData = keyXHR.some(function (item){
+			// 		return url.indexOf(item) > -1
+			// 	})
+			// 	if(IsCollectAllData && keyXHR.length){
+			// 		param = {
+			// 			...res,
+			// 			time,
+			// 			href: window.location.href
+			// 		}
+			// 	}else {
+			// 		param = {
+			// 			url,
+			// 			time,
+			// 			href: window.location.href
+			// 		}
+			// 	}
+			// 	window.postMessage(param, '*');
+			//
+			// }
 			http.request = function (param) {
 				let data = JSON.parse(JSON.stringify(param))
 				// console.log(param, "---request");
@@ -131,7 +167,7 @@ function ajaxLister (){
 					window.postMessage(data, '*');
 			};
 			http.response = function (res) {
-				// console.log(res, "---response");
+				console.log(res, "---response");
 				let url = res.config.url;
 				let time = getTimeStr();
 				let param = {}

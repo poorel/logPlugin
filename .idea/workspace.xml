@@ -11,9 +11,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="db055491-c0a9-439d-8b0b-ed3f41cc7de8" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/js/inject.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/inject.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/js/test.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/test.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/manifest.json" beforeDir="false" afterPath="$PROJECT_DIR$/manifest.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/popup.html" beforeDir="false" afterPath="$PROJECT_DIR$/popup.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,6 +44,7 @@
       <option name="presentableId" value="Default" />
       <updated>1610005401397</updated>
       <workItem from="1610005402784" duration="5268000" />
+      <workItem from="1616668817177" duration="8813000" />
     </task>
     <servers />
   </component>
@@ -60,15 +61,17 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="WindowStateProjectService">
     <state x="428" y="131" key="SettingsEditor" timestamp="1610010751474">
       <screen x="0" y="23" width="1920" height="975" />
     </state>
     <state x="428" y="131" key="SettingsEditor/0.23.1920.975@0.23.1920.975" timestamp="1610010751474" />
-    <state x="-1408" y="124" width="586" height="490" key="find.popup" timestamp="1610009367143">
+    <state x="-1408" y="124" width="586" height="490" key="find.popup" timestamp="1616668868272">
       <screen x="-1920" y="-84" width="1920" height="1057" />
     </state>
     <state x="-1408" y="124" width="586" height="490" key="find.popup/0.23.1280.695/-1920.-84.1920.1057@-1920.-84.1920.1057" timestamp="1610009367143" />
+    <state x="-1408" y="124" width="586" height="490" key="find.popup/0.23.1280.723/-1920.-84.1920.1057@-1920.-84.1920.1057" timestamp="1616668868272" />
   </component>
 </project>

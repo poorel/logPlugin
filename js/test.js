@@ -108,35 +108,38 @@
 		}
 
 		// 向页面注入JS
-		function injectCustomJs(jsPath) {
+		function injectCustomJs(jsPath, dom) {
 			jsPath = jsPath || 'js/inject.js';
 			var temp = document.createElement('script');
+			if(dom){
+				temp = dom.createElement('script');
+			}
 			temp.setAttribute('type', 'text/javascript');
 			// 获得的地址类似：chrome-extension://ihcokhadfjfchaeagdoclpnjdiokfakg/js/inject.js
 			temp.src = chrome.extension.getURL(jsPath);
 			temp.onload = function()
 			{
 				// 放在页面不好看，执行完后移除掉
-				this.parentNode.removeChild(this);
+				//this.parentNode.removeChild(this);
 				//发送content-script消息
 				window.postMessage({ajaxUrl, ajaxUrlSwitch}, '*');
 			};
 			document.body.appendChild(temp);
 		}
 		// xpath
-		function getXPath( element )
+		function getXPath( element, str = '')
 		{
 			var val=element.value;
-			console.log("val="+val);
+			// console.log("val="+val);
 			var xpath = '';
 			for ( ; element && element.nodeType == 1; element = element.parentNode )
 			{
-				console.log(element);
+				// console.log(element);
 				var id = s$(element.parentNode).children(element.tagName).index(element) + 1;
 				id > 1 ? (id = '[' + id + ']') : (id = '');
-				xpath = '/' + element.tagName.toLowerCase() + id + xpath;
+				xpath = element.tagName.toLowerCase() + id + xpath;
 			}
-			return xpath;
+			return str + '/' + xpath;
 		}
 		if(level === '2' || level === '3'){
 			s$(document).on('click',function(e){
@@ -171,7 +174,7 @@
 		if(level === '2' || level === '4'){
 			console.log('注入代码')
 			// injectCustomJs('js/jquery-2.1.4.js');
-			injectCustomJs()  //不可插入jq会扰乱原有环境
+			// injectCustomJs()  //不可插入jq会扰乱原有环境
 		}
 		// 检测下载
 		let Max = 3145728;  // 最大3mb
@@ -186,24 +189,38 @@
 
 		},10000);
 		// vue部分
+		console.log('iframe准备中...')
+		// 针对主版本url地址不变的情况，手动重现插入数据
+		// 存在风险 会导致侵入的内容越来越多？ 工作站却不需要如此
+		// 工作站没有嵌套,拣货待定
 		setTimeout(() => {
-			if(s$("iframe")[0]){
+			let ifr = s$("iframe")[0]
+			injectCustomJs()
+			if(ifr){
 				createJson ()
+
 				// console.log('999', s$(s$("iframe")[0].contentDocument).find(".el-select-dropdown__list"));
 				// console.log(document.getElementsByTagName('iframe')[0].contentWindow);
-				// 选择需要观察变动的节点
+
+				// 生成
+				// 选择需要观察变动的节点  下拉节点变动
 				let bt = debounce(bindClick);
 				// const targetNode = s$(s$("iframe")[0].contentDocument).find(".el-popper");
 				// 更优解
 				s$("iframe").contents().find("body")[0].addEventListener("DOMSubtreeModified", function(obj){
 					// obj
-					// console.log('列表中子元素被修改',obj);
 					let target = obj.target;
+					// console.log('列表中子元素被修改',target);
 					if(target && s$(target).hasClass('el-popper')){
 						bt(target);
 					}
 
 				}, false);
+				// s$("iframe").contents().find("body")[0].addEventListener("DOMNodeInserted", function(obj){
+				// 	// obj
+				// 	let target = obj.target;
+				// 	console.log('列表中子元素被insert',target);
+				// }, false);
 				// 不在使用此方法
 // // 观察器的配置（需要观察什么变动）
 // 				const config = {
@@ -262,18 +279,22 @@
 							context = s$.trim(dom.innerText);
 					}
 					if(!context || context.length > 20) context = '';
+					console.log(getXPath(dom, 'iframe'));
 					content.push(getTimeStr() + `事件类型:${e.type};事件对象标签名:${dom.nodeName};事件对象文字内容:${context};事件对象样式名:${_class};`)
 					saveData(content);
 					console.log(`事件类型:${e.type};事件对象标签名:${dom.nodeName};事件对象文字内容:${context};事件对象样式名:${_class};`);
 				}
 				function bindClick(dom){
-					console.log('更新绑定',dom);
-					let li = s$(s$("iframe")[0].contentDocument).find('.el-popper').find(".el-select-dropdown__item")
+					// console.log('更新绑定',dom);
+					let li = s$(s$("iframe")[0].contentDocument).find('.el-popper').find(".el-select-dropdown__item");
+					let inp = s$(s$("iframe")[0].contentDocument).find('input');
 					s$(dom).unbind("click").on('click',clickEvent)
 					// li动态生成时
 					li.unbind("click").on('click',clickEvent)
+					inp.find('input[class=el-range-input],input[type=text]').unbind("click").on('click',clickEvent)
 				}
-				s$(s$("iframe")[0].contentDocument).unbind("click").on('click',clickEvent)
+				s$(s$("iframe")[0].contentDocument).find('input[class=el-range-input],input[type=text]').on('click',clickEvent)
+				console.log('iframe 初次更新')
 				bindClick();
 
 				s$(s$("iframe")[0].contentDocument).on('change',function(e){
@@ -285,7 +306,7 @@
 					console.log(`事件类型:${e.type};事件对象标签名:${dom.nodeName};事件对象name名:${name};输入内容:${s$(dom).val()}`);
 				});
 			}
-		},5000)
+		},10000)
 
 	});
 
