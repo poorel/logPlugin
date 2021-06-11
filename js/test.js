@@ -76,6 +76,7 @@
 			}
 		})
 		if(level === '1' || !ymyz){
+			injectCustomJs('js/socket.js')
 			return ;
 		}
 
@@ -126,6 +127,7 @@
 			};
 			document.body.appendChild(temp);
 		}
+
 		// xpath
 		function getXPath( element, str = '')
 		{
