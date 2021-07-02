@@ -44,6 +44,16 @@
 			}
 		});
 	}
+	// console.log('接收服务已开启');
+	window.addEventListener("message", function(e)
+	{
+		//console.log('!!!!!收到保存消息：', e.data);
+		if(!e.data || e.data.configInfo){
+			return ;
+		}
+		content.push(e.data);
+		saveData(content);
+	}, false);
 
 	//保存到本地数据
 	function saveLocalData (data){
@@ -65,26 +75,29 @@
 		if(!res._form){
 			return ;
 		}
-		let {level, ajaxUrl, domain, url, ajaxUrlSwitch} = res._form;  //监听等级 接口监听地址  域名监听地址  日志记录地址
+		let {msgType, ajaxUrl, domain, operate, port, socket, none} = res._form;  //监听等级 接口监听地址  域名监听地址  日志记录地址
 		let allDomain = domain.split(/\n/g);
 		let ymyz = false;
 		let href = window.location.href;
-		console.log(domain);
+
 		allDomain.forEach((item) => {
 			if(href.includes(item)){
 				ymyz = true
 			}
 		})
-		if(level === '1' || !ymyz){
-			injectCustomJs('js/socket.js')
+		if(none || !ymyz || !domain){
 			return ;
 		}
+		if(socket){
+			injectCustomJs('js/socket.js')
+		}
+
 
 		// 判断是否是ip地址 决定发送websocket还是ajax 目前直接websocket
-		let ws = false
-		if(false){ // url != '999' && url
-			ws = new WebSocket(url);
-		}
+		// let ws = false
+		// if(false){ // url != '999' && url
+		// 	ws = new WebSocket(url);
+		// }
 
 		// ws.onclose = function (res) {
 		// 	console.log(res);
@@ -123,7 +136,8 @@
 				// 放在页面不好看，执行完后移除掉
 				//this.parentNode.removeChild(this);
 				//发送content-script消息
-				window.postMessage({ajaxUrl, ajaxUrlSwitch}, '*');
+				res._form.configInfo = true;
+				window.postMessage(res._form, '*');
 			};
 			document.body.appendChild(temp);
 		}
@@ -143,7 +157,7 @@
 			}
 			return str + '/' + xpath;
 		}
-		if(level === '2' || level === '3'){
+		if(operate){
 			s$(document).on('click',function(e){
 				console.log('点击')
 				let dom = e.target;
@@ -173,8 +187,10 @@
 			});
 		}
 
-		if(level === '2' || level === '4'){
+		if(port){
+			// 有空分割一下接口的监听
 			console.log('注入代码')
+			injectCustomJs();
 			// injectCustomJs('js/jquery-2.1.4.js');
 			// injectCustomJs()  //不可插入jq会扰乱原有环境
 		}
@@ -190,7 +206,8 @@
 			});
 
 		},10000);
-		// vue部分
+		// vue部分 主版本不用了
+		return;
 		console.log('iframe准备中...')
 		// 针对主版本url地址不变的情况，手动重现插入数据
 		// 存在风险 会导致侵入的内容越来越多？ 工作站却不需要如此
@@ -415,14 +432,6 @@
 			});
 		}
 	});
-
-	window.addEventListener("message", function(e)
-	{
-		// console.log('收到消息：', e.data);
-		content.push(e.data);
-		saveData(content);
-	}, false);
-
 
 	function initCustomEventListen() {
 		var hiddenDiv = document.getElementById('myCustomEventDiv');

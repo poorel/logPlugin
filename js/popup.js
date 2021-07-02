@@ -228,12 +228,24 @@ chrome.storage.sync.get('_form', (res) => {
 	if(!res._form){
 		return ;
 	}
-	let {level, ajaxUrl, domain, url} = res._form;
-	console.log(url)
-	s$("[name='level']").val(level);
+	let {msgType, ajaxUrl, domain, url, operate, port, socket, none,sendMsgType} = res._form;
+	s$("[name='msgType']").val(msgType);
+	s$("[name='sendMsgType']").val(sendMsgType);
 	s$("[name='url']").val(url);
 	s$("[name='domain']").val(domain);
 	s$("[name='ajaxUrl']").val(ajaxUrl);
+	if(operate){
+		s$("[name='operate']").attr("checked",true);
+	}
+	if(port){
+		s$("[name='port']").attr("checked",true);
+	}
+	if(socket){
+		s$("[name='socket']").attr("checked",true);
+	}
+	if(none){
+		s$("[name='none']").attr("checked",true);
+	}
 });
 
 s$('#saveLog').on('click', function(){

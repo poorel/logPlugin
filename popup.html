@@ -24,17 +24,26 @@
 <!--			<input type="checkbox" name="switch" lay-skin="switch">-->
 <!--		</div>-->
 <!--	</div>-->
-	<div class="layui-form-item">
-		<label class="layui-form-label">选择框</label>
+	<div class="layui-form-item" pane="">
+		<label class="layui-form-label">监听对象</label>
 		<div class="layui-input-block">
-			<select name="level" lay-verify="required">
-				<option value="3">只监听操作</option>
-				<option value="1">不监听</option>
-				<option value="2">开启全部监听</option>
-				<option value="4">只监听接口</option>
-			</select>
+			<input type="checkbox" name="operate" lay-skin="primary" title="操作" disabled>
+			<input type="checkbox" name="port" lay-skin="primary" title="接口">
+			<input type="checkbox" name="socket" lay-skin="primary" title="socket">
+			<input type="checkbox" name="none" lay-skin="primary" title="全都不监听">
 		</div>
 	</div>
+<!--	<div class="layui-form-item">-->
+<!--		<label class="layui-form-label">选择框</label>-->
+<!--		<div class="layui-input-block">-->
+<!--			<select name="level" lay-verify="required">-->
+<!--				<option value="3">只监听操作</option>-->
+<!--				<option value="1">不监听</option>-->
+<!--				<option value="2">开启全部监听</option>-->
+<!--				<option value="4">只监听接口</option>-->
+<!--			</select>-->
+<!--		</div>-->
+<!--	</div>-->
 <!--	<div class="layui-form-item">-->
 <!--		<label class="layui-form-label">日志记录地址</label>-->
 <!--		<div class="layui-input-block">-->
@@ -57,18 +66,50 @@
 		</div>
 	</div>
 	<div class="layui-form-item layui-form-text">
+		<label class="layui-form-label">socket-sendMsgType</label>
+		<div class="layui-input-block">
+			<textarea name="sendMsgType" placeholder="多个地址英文逗号分割，不填则不监听" class="layui-textarea"></textarea>
+		</div>
+	</div>
+	<div class="layui-form-item layui-form-text">
+		<label class="layui-form-label">socket-msgType</label>
+		<div class="layui-input-block">
+			<textarea name="msgType" placeholder="多个地址英文逗号分割，不填则不监听" class="layui-textarea"></textarea>
+		</div>
+	</div>
+	<div class="layui-form-item layui-form-text">
 		<label class="layui-form-label">接口地址</label>
 		<div class="layui-input-block">
 			<textarea name="ajaxUrl" placeholder="多个地址英文逗号分割，不填则不监听任何接口详细内容" class="layui-textarea"></textarea>
 <!--	，开启下方开关则只监听填入接口		<input type="checkbox" name="ajaxUrlSwitch" lay-skin="switch">-->
 		</div>
 	</div>
-
 	<div class="layui-form-item">
 		<div class="layui-input-block">
 			<button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
 			<button type="reset" class="layui-btn layui-btn-primary">重置</button>
 			<button id="saveLog" class="layui-btn layui-btn-radius layui-btn-warm">保存日志</button>
+		</div>
+	</div>
+<!--  layer神奇的bug 后面几个输入框会卡	-->
+	<div class="layui-form-item layui-form-text" style="visibility: hidden;height: 0px;margin-bottom: 0px;">
+		<label class="layui-form-label">使用说明</label>
+		<div class="layui-input-block">
+			<textarea class="layui-textarea">
+				1.主版本目前限制只有拣货工作站有效，接口和socket都支持
+				2.发送与接收的socket都必填，不填不会保留数据(只需要填入msgType末尾的内容即可)
+				3.接口默认会进行全部记录，需要记录详细内容，则需要填入对应接口地址
+			</textarea>
+		</div>
+	</div>
+	<div class="layui-form-item layui-form-text" style="visibility: hidden;height: 0px;margin-bottom: 0px;">
+		<label class="layui-form-label">使用说明</label>
+		<div class="layui-input-block">
+			<textarea class="layui-textarea">
+				1.主版本目前限制只有拣货工作站有效，接口和socket都支持
+				2.发送与接收的socket都必填，不填不会保留数据(只需要填入msgType末尾的内容即可)
+				3.接口默认会进行全部记录，需要记录详细内容，则需要填入对应接口地址
+			</textarea>
 		</div>
 	</div>
 </form>
