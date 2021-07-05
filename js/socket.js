@@ -1,7 +1,7 @@
 console.log('socket...')
 let keySocket = [];
 let sendKeySocket = []
-
+let currentTime = new Date().getTime();
 window.addEventListener("message", function(e)
 {
     let {msgType,sendMsgType,configInfo} = e.data
@@ -16,6 +16,7 @@ window.addEventListener("message", function(e)
         sendKeySocket = sendMsgType.split(',');
     }
 }, false);
+
 
 let time = setInterval(() => {
     if(window._PickWebSocket){
@@ -40,5 +41,9 @@ let time = setInterval(() => {
                 window.postMessage(msgType, '*');
             }
         }
+    }
+    // 30s还没有 就不要再玩了
+    if((new Date().getTime() - currentTime) > 30000 ){
+        clearInterval(time)
     }
 },100)
