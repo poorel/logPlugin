@@ -47,7 +47,12 @@
       <updated>1610005401397</updated>
       <workItem from="1610005402784" duration="5268000" />
       <workItem from="1616668817177" duration="8813000" />
-      <workItem from="1625192306772" duration="10041000" />
+      <workItem from="1625192306772" duration="11804000" />
+      <workItem from="1625452391233" duration="216000" />
+      <workItem from="1625453122597" duration="2000" />
+      <workItem from="1625484714430" duration="179000" />
+      <workItem from="1626319317783" duration="4043000" />
+      <workItem from="1628140143943" duration="4036000" />
     </task>
     <servers />
   </component>
@@ -67,11 +72,14 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="-1710" y="82" width="1248" height="706" key="find.popup" timestamp="1625210863806">
+    <state x="44" y="43" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1626681768410">
+      <screen x="0" y="23" width="1280" height="721" />
+    </state>
+    <state x="44" y="43" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.23.1280.721/-1920.-84.1920.1057@0.23.1280.721" timestamp="1626681768410" />
+    <state x="-1710" y="82" width="1248" height="706" key="find.popup" timestamp="1628143417845">
       <screen x="-1920" y="-84" width="1920" height="1057" />
     </state>
     <state x="-1408" y="124" width="586" height="490" key="find.popup/0.23.1280.721/-1920.-84.1920.1057@-1920.-84.1920.1057" timestamp="1625192723460" />
-    <state x="-1710" y="82" width="1248" height="706" key="find.popup/0.23.1280.721/-1920.-84.1920.1057@0.23.1280.721" timestamp="1625210863806" />
-    <state x="-1408" y="124" width="586" height="490" key="find.popup/0.23.1280.723/-1920.-84.1920.1057@-1920.-84.1920.1057" timestamp="1616668868272" />
+    <state x="-1710" y="82" width="1248" height="706" key="find.popup/0.23.1280.721/-1920.-84.1920.1057@0.23.1280.721" timestamp="1628143417845" />
   </component>
 </project>

@@ -228,12 +228,13 @@ chrome.storage.sync.get('_form', (res) => {
 	if(!res._form){
 		return ;
 	}
-	let {msgType, ajaxUrl, domain, url, operate, port, socket, none,sendMsgType} = res._form;
+	let {msgType, ajaxUrl, domain, url, operate, port, socket, none,sendMsgType,socketProcess} = res._form;
 	s$("[name='msgType']").val(msgType);
 	s$("[name='sendMsgType']").val(sendMsgType);
 	s$("[name='url']").val(url);
 	s$("[name='domain']").val(domain);
 	s$("[name='ajaxUrl']").val(ajaxUrl);
+	s$("[name='socketProcess']").val(socketProcess);
 	if(operate){
 		s$("[name='operate']").attr("checked",true);
 	}

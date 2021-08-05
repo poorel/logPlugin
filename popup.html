@@ -27,10 +27,20 @@
 	<div class="layui-form-item" pane="">
 		<label class="layui-form-label">监听对象</label>
 		<div class="layui-input-block">
-			<input type="checkbox" name="operate" lay-skin="primary" title="操作" disabled>
 			<input type="checkbox" name="port" lay-skin="primary" title="接口">
 			<input type="checkbox" name="socket" lay-skin="primary" title="socket">
 			<input type="checkbox" name="none" lay-skin="primary" title="全都不监听">
+			<input type="checkbox" name="operate" lay-skin="primary" title="操作" disabled>
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<label class="layui-form-label">socket流程监听</label>
+		<div class="layui-input-inline">
+			<select name="socketProcess">
+				<option value="2">详细监听</option>
+				<option value="1">简易监听</option>
+				<option value="0" selected="">不监听</option>
+			</select>
 		</div>
 	</div>
 <!--	<div class="layui-form-item">-->

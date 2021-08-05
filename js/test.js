@@ -136,6 +136,7 @@
 				// 放在页面不好看，执行完后移除掉
 				//this.parentNode.removeChild(this);
 				//发送content-script消息
+				// 配置信息
 				res._form.configInfo = true;
 				window.postMessage(res._form, '*');
 			};
@@ -196,9 +197,8 @@
 		}
 		// 检测下载
 		let Max = 3145728;  // 最大3mb
-		let interval = setInterval(function(){
+		setInterval(function(){
 			chrome.storage.local.getBytesInUse('localData', function(res) {
-				// Notify that we saved.
 				if( res > Max ){
 					createJson();
 				}
